@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Scraps</title>
     <style>
-      body { background-color: #F2F6D0 }
+      body { background-color: rgb(98, 106, 107) }
       #wrapper {
         width: 960px;
         margin-left: auto;
@@ -16,19 +16,23 @@
         overflow: auto;
         width: 60%;
         height: 700px;
+        color: white;
       }
       #notes {
         float: right;
         width: 30%;
+        color: white;
       }
       textarea, input {
         display: block;
         width: 100%;
-        background-color: #FCF5C7;
+        background-color: rgb(199, 159, 126);
       }
       input {
         height: 36px;
         font-size: 24px;
+        background-color: rgb(199, 159, 126);
+
       }
       textarea {
         height: 200px;
@@ -40,7 +44,15 @@
     <div id="wrapper">
       <h1>Note Scraper</h1>
       <h2><i>SCRAPS</i></h2>
-      <div id="articles"></div>
+      <div id="articles">
+        <button type="button" href = "/scrape">Scrape</button>
+        <button type="button" href="/articles">Saved Articles</button>
+      </div>
+
+      <!-- <a href="/books">See your books!</a> <br />
+      <a href="/library">See your library!</a> <br />
+      <a href="/populated">See your library, populated with books!</a> -->
+
       <div id="notes">
         <button id="savenote" type="button">save note</button>
       </div>

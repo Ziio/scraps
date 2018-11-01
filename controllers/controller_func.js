@@ -61,6 +61,9 @@ $(document).on("click", "#savenote", function() {
   $("#titleinput").val("");
   $("#bodyinput").val("");
 });
+
+
+
   
         // Create a new Article using the `result` object built from scraping
         db.Article.create(result)
@@ -79,10 +82,11 @@ $(document).on("click", "#savenote", function() {
     });
   });
   
-  // Route for getting all Articles from the db
+  $(document).on("click", "#savedArticles", function() {
+      // Route for getting all Articles from the db
   app.get("/articles", function(req, res) {
     // Grab every document in the Articles collection
-    db.Article.find({})
+    db.notes.find({})
       .then(function(dbArticle) {
         // If we were able to successfully find Articles, send them back to the client
         res.json(dbArticle);
@@ -91,7 +95,29 @@ $(document).on("click", "#savenote", function() {
         // If an error occurred, send it to the client
         res.json(err);
       });
+      
   });
+    // Run a POST request to change the note, using what's entered in the inputs
+    $.ajax({
+      method: "POST",
+      url: "/articles/",
+      data: {
+        // Value taken from title input
+        title: $("#titleinput").val(),
+        // Value taken from note textarea
+        body: $("#bodyinput").val()
+      }
+    })
+  
+  
+    // Also, remove the values entered in the input and textarea for note entry
+    $("#titleinput").val("");
+    $("#bodyinput").val("");
+  });
+
+
+  
+
   
   // Route for grabbing a specific Article by id, populate it with it's note
   app.get("/articles/:id", function(req, res) {
