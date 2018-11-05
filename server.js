@@ -29,6 +29,7 @@ app.use(express.static("public"));
 mongoose.connect("mongodb://localhost/scraper", { useNewUrlParser: true });
 
 require("./controllers/controller_func.js")(app);
+// require("./public/app.js")(app);
 
 
 // Start the server
