@@ -28,6 +28,11 @@ app.use(express.static("public"));
 // Connect to the Mongo DB
 mongoose.connect("mongodb://localhost/scraper", { useNewUrlParser: true });
 
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+
+mongoose.connect(MONGODB_URI);
+
+
 require("./controllers/controller_func.js")(app);
 // require("./public/app.js")(app);
 
