@@ -19,12 +19,13 @@ app.get("/scrape", function(req, res) {
     axios.get("http://www.echojs.com/").then(function(response) {
       // Then, we load that into cheerio and save it to $ for a shorthand selector
       var $ = cheerio.load(response.data);
+
+      var result = [];
+      
   
       // Now, we grab every h2 within an article tag, and do the following:
       $("article h2").each(function(i, element) {
         // Save an empty result object
-        var result = {};
-  
         // Add the text and href of every link, and save them as properties of the result object
         result.title = $(this)
           .children("a")
@@ -45,6 +46,8 @@ app.get("/scrape", function(req, res) {
             return res.json(err);
           });
       });
+
+    
   
       // If we were able to successfully scrape and save an Article, send a message to the client
       res.send("Scrape Complete");
@@ -65,6 +68,77 @@ app.get("/articles", function(req, res) {
     });
 });
 
+
+app.get("/articles/saved", function(req, res) {
+  db.Article.find({})
+    // ..and populate all of the notes associated with it
+    .populate("articles")
+    .then(function(dbArticle) {
+      dbArticle.savedArticles = dbArticles;
+      dbArticle.layout = "saved-layout";
+      return res.render("saved", dbArticles);
+    })
+    .catch(function(err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
+});
+
+app.post("/articles/saved", function(req, res) {
+  //create new article schema for saved article requested from client side
+  db.Article.create(req.body)
+  .then(function(dbArticle) {
+    console.log(dbArticle);
+    return res.json({"saved article": dbArticle});
+  })
+  .catch(function(err) {
+    return res.json(err);
+  });
+
+});
+
+app.get("/articles/saved/:id", function(req, res) {
+  
+  db.Article.findOne({ _id: req.params.id })
+    .populate("note")
+    .then(function(dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
+
+app.post("/articles/saved/:id", function(req, res) {
+
+  db.Note.create(req.body)
+    .then(function(dbNote) {
+      return db.Article.findOneAndUpdate({_id: req.params.id}, {note: dbNote._id}, {new: true});
+    })
+    .then(function(dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
+
+app.delete("/articles/saved/:id", function(req, res) {
+
+  db.Article.deleteOne({ _id: req.params.id })
+    .then(function(deletedArticle) {
+      db.Note.deleteOne({ _id: deletedArticle.note })
+        .then(function(deletedNote) {
+          res.json({"successfully deleted docs": {deletedArticle, deletedNote}});
+        })
+        .catch(function(err) {
+          res.json(err);
+        });
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
 
 
   
